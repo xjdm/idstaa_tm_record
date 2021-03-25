@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idstaa.tm.mapper.TmRecordMapper">
+  <resultMap id="BaseResultMap" type="com.idstaa.tm.entity.TmRecord">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="i_who" jdbcType="VARCHAR" property="iWho" />
+    <result column="i_when" jdbcType="DATE" property="iWhen" />
+    <result column="i_where" jdbcType="VARCHAR" property="iWhere" />
+    <result column="i_what" jdbcType="VARCHAR" property="iWhat" />
+    <result column="i_why" jdbcType="VARCHAR" property="iWhy" />
+    <result column="i_how" jdbcType="VARCHAR" property="iHow" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_time" jdbcType="DATE" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="effective" jdbcType="BIT" property="effective" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, i_who, i_when, i_where, i_what, i_why, i_how, remark, create_time, create_user, 
+    update_time, update_user, effective
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tm_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tm_record
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.idstaa.tm.entity.TmRecord">
+    insert into tm_record (id, i_who, i_when, 
+      i_where, i_what, i_why, 
+      i_how, remark, create_time, 
+      create_user, update_time, update_user, 
+      effective)
+    values (#{id,jdbcType=BIGINT}, #{iWho,jdbcType=VARCHAR}, #{iWhen,jdbcType=DATE}, 
+      #{iWhere,jdbcType=VARCHAR}, #{iWhat,jdbcType=VARCHAR}, #{iWhy,jdbcType=VARCHAR}, 
+      #{iHow,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=DATE}, #{updateUser,jdbcType=VARCHAR}, 
+      #{effective,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.idstaa.tm.entity.TmRecord">
+    insert into tm_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="iWho != null">
+        i_who,
+      </if>
+      <if test="iWhen != null">
+        i_when,
+      </if>
+      <if test="iWhere != null">
+        i_where,
+      </if>
+      <if test="iWhat != null">
+        i_what,
+      </if>
+      <if test="iWhy != null">
+        i_why,
+      </if>
+      <if test="iHow != null">
+        i_how,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="effective != null">
+        effective,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="iWho != null">
+        #{iWho,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhen != null">
+        #{iWhen,jdbcType=DATE},
+      </if>
+      <if test="iWhere != null">
+        #{iWhere,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhat != null">
+        #{iWhat,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhy != null">
+        #{iWhy,jdbcType=VARCHAR},
+      </if>
+      <if test="iHow != null">
+        #{iHow,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="effective != null">
+        #{effective,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.idstaa.tm.entity.TmRecord">
+    update tm_record
+    <set>
+      <if test="iWho != null">
+        i_who = #{iWho,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhen != null">
+        i_when = #{iWhen,jdbcType=DATE},
+      </if>
+      <if test="iWhere != null">
+        i_where = #{iWhere,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhat != null">
+        i_what = #{iWhat,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhy != null">
+        i_why = #{iWhy,jdbcType=VARCHAR},
+      </if>
+      <if test="iHow != null">
+        i_how = #{iHow,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="effective != null">
+        effective = #{effective,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.idstaa.tm.entity.TmRecord">
+    update tm_record
+    set i_who = #{iWho,jdbcType=VARCHAR},
+      i_when = #{iWhen,jdbcType=DATE},
+      i_where = #{iWhere,jdbcType=VARCHAR},
+      i_what = #{iWhat,jdbcType=VARCHAR},
+      i_why = #{iWhy,jdbcType=VARCHAR},
+      i_how = #{iHow,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      effective = #{effective,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <resultMap id="BaseResultMap" type="com.idstaa.tm.entity.TmRecord">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="i_who" jdbcType="VARCHAR" property="iWho" />
+    <result column="i_when" jdbcType="DATE" property="iWhen" />
+    <result column="i_where" jdbcType="VARCHAR" property="iWhere" />
+    <result column="i_what" jdbcType="VARCHAR" property="iWhat" />
+    <result column="i_why" jdbcType="VARCHAR" property="iWhy" />
+    <result column="i_how" jdbcType="VARCHAR" property="iHow" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_time" jdbcType="DATE" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="effective" jdbcType="BIT" property="effective" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, i_who, i_when, i_where, i_what, i_why, i_how, remark, create_time, create_user, 
+    update_time, update_user, effective
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tm_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tm_record
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.idstaa.tm.entity.TmRecord">
+    insert into tm_record (id, i_who, i_when, 
+      i_where, i_what, i_why, 
+      i_how, remark, create_time, 
+      create_user, update_time, update_user, 
+      effective)
+    values (#{id,jdbcType=BIGINT}, #{iWho,jdbcType=VARCHAR}, #{iWhen,jdbcType=DATE}, 
+      #{iWhere,jdbcType=VARCHAR}, #{iWhat,jdbcType=VARCHAR}, #{iWhy,jdbcType=VARCHAR}, 
+      #{iHow,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=DATE}, #{updateUser,jdbcType=VARCHAR}, 
+      #{effective,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.idstaa.tm.entity.TmRecord">
+    insert into tm_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="iWho != null">
+        i_who,
+      </if>
+      <if test="iWhen != null">
+        i_when,
+      </if>
+      <if test="iWhere != null">
+        i_where,
+      </if>
+      <if test="iWhat != null">
+        i_what,
+      </if>
+      <if test="iWhy != null">
+        i_why,
+      </if>
+      <if test="iHow != null">
+        i_how,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="effective != null">
+        effective,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="iWho != null">
+        #{iWho,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhen != null">
+        #{iWhen,jdbcType=DATE},
+      </if>
+      <if test="iWhere != null">
+        #{iWhere,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhat != null">
+        #{iWhat,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhy != null">
+        #{iWhy,jdbcType=VARCHAR},
+      </if>
+      <if test="iHow != null">
+        #{iHow,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="effective != null">
+        #{effective,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.idstaa.tm.entity.TmRecord">
+    update tm_record
+    <set>
+      <if test="iWho != null">
+        i_who = #{iWho,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhen != null">
+        i_when = #{iWhen,jdbcType=DATE},
+      </if>
+      <if test="iWhere != null">
+        i_where = #{iWhere,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhat != null">
+        i_what = #{iWhat,jdbcType=VARCHAR},
+      </if>
+      <if test="iWhy != null">
+        i_why = #{iWhy,jdbcType=VARCHAR},
+      </if>
+      <if test="iHow != null">
+        i_how = #{iHow,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="effective != null">
+        effective = #{effective,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.idstaa.tm.entity.TmRecord">
+    update tm_record
+    set i_who = #{iWho,jdbcType=VARCHAR},
+      i_when = #{iWhen,jdbcType=DATE},
+      i_where = #{iWhere,jdbcType=VARCHAR},
+      i_what = #{iWhat,jdbcType=VARCHAR},
+      i_why = #{iWhy,jdbcType=VARCHAR},
+      i_how = #{iHow,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      effective = #{effective,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
