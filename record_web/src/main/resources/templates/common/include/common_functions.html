@@ -1,0 +1,237 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<script th:inline="javascript">
+    var baseContext=[[@{/}]]+[[${moduleName}]];
+    var btnSaveExtraData = true;
+    $(document).ready(function() {
+        //新增或更新
+        $("#btn-save").bind("click", btnSaveExtraData, function() {
+            if(!btnSaveExtraData){
+                btnSaveExtraData = true;
+                return;
+            }
+            var url = "";
+            var idName = "id";
+            var modelName = "";
+            var keyValue="";
+            if($("#" + idName).val()!="undefined"){
+            	keyValue=$("#" + idName).val();
+            }else{
+            	keyValue=$(".key").val();
+            }
+            if (keyValue == "0" || keyValue == "" || keyValue == null) {
+                url = baseContext+"/add";
+                modelName = "#myViewModal";
+            } else {
+                url = baseContext+"/update";
+                modelName = "#myEditModal";
+            }
+            var data = $("#data-form").serialize();
+            $.post(url, data, function(data) {
+                if (data.code == '1') {
+                    $("#dataDisplay").trigger("reloadGrid");
+                    $(modelName).modal('hide');
+                    $("#myEditModal").modal('hide');
+                } else {
+                    alert("操作失败："+data.message);
+                }
+            });
+        });
+        //搜索
+        $("#search").bind("click", function() {
+            $("#dataDisplay").trigger("search");
+        });
+        $("#addData").bind("click", function() {
+            $.get(baseContext+"/intoAdd", function(data) {
+                if (data.code == '1') {
+                    $("#myEditModal").modal('show');
+                    //填充数据
+                    var dataObj = data.results;
+                    for ( var property in dataObj) {
+                        $("#myEditModal").find("#" + property).val(dataObj[property]);
+                    }
+                } else {
+                    alert("操作失败："+data.message);
+                }
+            });
+        });
+        //批量删除
+        $("#batchDelete").bind("click", function() {
+            var selectedRows = $(".info");
+            if (selectedRows.length == 0) {
+                alert("请至少选择一行");
+                return;
+            }
+            var data = new Array(selectedRows.length);
+            for (var i = 0; i < selectedRows.length; i++) {
+                data[i] = "ids="+$(selectedRows[i]).attr("id");
+            }
+            if (confirm("确定要删除这些项目？") == true) {
+                $.post(baseContext+"/deleteBatch", data.join("&"), function(data) {
+                    if (data.code == '1') {
+                        $("#dataDisplay").trigger("reloadGrid");
+                    } else {
+                        alert("操作失败："+data.message);
+                    }
+                });
+            }
+        });
+        $("input[name$='Date']").datepicker({
+            minView : "month", //选择日期后，不会再跳转去选择时分秒
+            language : 'zh-CN',
+            format : 'yyyy-mm-dd',
+            todayBtn : "linked",
+            todayHighlight : true,
+            autoclose : true,
+        });
+        $("input[name$='Time']").datetimepicker({
+            minView: 0,
+            language : 'zh-CN',
+            format : 'yyyy-mm-dd hh:ii:ss',
+            todayBtn : "linked",
+            todayHighlight : true,
+            autoclose : true,
+            minuteStep: 5,
+        });
+    });
+    //普通查看
+    function viewData(id) {
+        $.get(baseContext+"/view/" + id, function(data) {
+            if (data.code == '1') {
+                $("#myViewModal").modal('show');
+                //填充数据
+                var result = data.results;
+                for ( var property in result) {
+                    if (null == result[property]) {
+                        result[property] = "";
+                    }
+                    $("#myViewModal").find("#" + property).text(result[property]);
+                }
+            } else {
+                alert("操作失败："+data.message);
+            }
+        });
+    }
+    //查看带数据转换
+    function viewDataWithTrans(id, transFun) {
+        $.get(baseContext+"/view/" + id, function(data) {
+            if (data.code == '1') {
+                $("#myViewModal").modal('show');
+                //填充数据
+                var result = data.results;
+                alert(data.results);
+                for ( var property in result) {
+                    if (null == result[property]) {
+                        result[property] = "";
+                    }
+                    result[property] = transFun.call(this, property, result[property]);
+                    $("#myViewModal").find("#" + property).text(result[property]);
+                }
+            } else {
+                alert("操作失败："+data.message);
+            }
+        });
+    }
+    //单个删除
+    function deleteData(id, module) {
+        $("#myDeleteModal").modal("show");
+        $('#delete-form-id').val(id);
+        $('#delete-form-module').val(module);
+    }
+    //普通编辑页面
+    function editData(id) {
+        $.get(baseContext+"/view/" + id, function(data) {
+            if (data.code == '1') {
+                $("#myEditModal").modal('show');
+                //填充数据
+                var result = data.results;
+                for (var property in result) {
+                    $("#myEditModal").find("#" + property).val(result[property]).trigger('change');
+                }
+            } else {
+                alert("操作失败："+data.message);
+            }
+        });
+    }
+    //编辑带转换数据
+    function editDataWithTrans(id, transFun) {
+        $.get(baseContext+"/getOrderInfo/" + id, function(data) {
+            if (data.code == '1') {
+                $("#myEditModal").modal('show');
+                //填充数据
+                var result = data.results;
+                for ( var property in result) {
+                    result[property] = transFun.call(this, property, result[property]);
+                    $("#myEditModal").find("#" + property).val(result[property]).trigger('change');
+                }
+            } else {
+                alert("操作失败："+data.message);
+            }
+        });
+    }
+    //文件上传
+    function batchUpload2Local(fileUploaderId, callBackFunction) {
+        var formData = new FormData();
+        var fileNum=$( "#"+fileUploaderId)[0].files.length;
+        for(var i=0;i<fileNum;i++){
+            formData.append("fileList",$( "#"+fileUploaderId)[0].files[i]);
+        }
+        var uploadUrl=[[@{/upload/upload2Local}]];
+        $.ajax({
+            type:"post",
+            url:uploadUrl,
+            data:formData,
+            processData:false,
+            contentType:false,
+            success:function(data){
+                if (data.code == '1') {
+                    alert(data.message);
+                    window[callBackFunction].call(this,data.results);
+                } else {
+                    alert("操作失败："+data.message);
+                }
+            }
+        });
+    }
+    //图片上传到又拍云
+    function singleUploadImage2Cloud(fileUploaderId, callBackFunction) {
+        var formAuthDataUrl= [[@{/upload/imageUpload2upyun}]];
+        uploadFile(formAuthDataUrl,fileUploaderId,callBackFunction)
+    }
+    //文件上传到又拍云
+    function singleUploadFile2Cloud(fileUploaderId, callBackFunction) {
+        var formAuthDataUrl= [[@{/upload/fileUpload2upyun}]];
+        uploadFile(formAuthDataUrl,fileUploaderId,callBackFunction);
+    }
+    function uploadFile(formAuthDataUrl,fileUploaderId,callBackFunction){
+        $.get(formAuthDataUrl, function(data){
+            if (data.code == '1') {
+                var formData = new FormData();
+                formData.append("policy", data.results.policy);
+                formData.append("signature", data.results.signature);
+                var fileNum=$( "#"+fileUploaderId)[0].files.length;
+                for(var i=0;i<fileNum;i++){
+                    formData.append("file",$( "#"+fileUploaderId)[0].files[i]);
+                }
+                $.ajax({
+                    url : data.results.postUrl,
+                    type : "POST",
+                    data : formData,
+                    processData : false,
+                    contentType : false,
+                    success : function(result) {
+                        var resultObj = JSON.parse(result);
+                        resultObj['dataResults']=data.results;
+                        window[callBackFunction].call(this,resultObj);
+                        alert("上传成功");
+                    },
+                    error : function(responseStr) {
+                        alert("上传失败");
+                    }
+                });
+            } else {
+                alert("操作失败："+data.message);
+            }
+        });
+    }
+</script>

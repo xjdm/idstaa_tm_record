@@ -1,0 +1,53 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!-- 数据表格展示窗口 -->
+<div th:fragment="display" id="dataDisplay" class="collapse navbar-collapse" th:with="prefix=${'default'}">
+	<div class="mt-20">
+		<table th:id="${prefix}+'_contentArea'" class="table table-border table-bordered table-bg table-hover table-sort table-responsive">
+			<thead th:id="${prefix}+'_fixedContent'">
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" name="" value=""></th>
+				<th width="80">ID</th>
+				<th width="80">何人</th>
+				<th width="80">何时</th>
+				<th width="80">何地</th>
+				<th width="120">何事</th>
+				<th width="75">怎么样</th>
+				<th width="60">创建时间</th>
+				<th width="60">创建人</th>
+				<th width="60">备注</th>
+				<th width="120">操作</th>
+			</tr>
+			</thead>
+		</table>
+		<!-- 数据模版 -->
+		<!--style="display: none"-->
+		<table th:id="${prefix}+'_copyRow'" style="display: none">
+			<tbody id="table-data-template">
+			<tr id=":id" onclick='$(this).toggleClass("info");'>
+				<td width="25"><input type="checkbox" value="" name=""></td>
+				<td width="80">:id</td>
+				<td width="80">:iWho</td>
+				<td width="120">:iWhen</td>
+				<td width="140">:iWhat</td>
+				<td width="120">:iWhy</td>
+				<td width="75">:iHow</td>
+				<td width="60">:createTime</td>
+				<td width="60">:createUser</td>
+				<td width="60">:remark</td>
+				<td>
+					<a class="btn" onclick="viewData(':id');">
+						<span class="icon-eye-open" title="查看"></span>
+					</a>
+					<a class="btn" onclick="editData(':id');">
+						<span class="icon-edit" title="修改"></span>
+					</a>
+					<a class="btn" th:onclick="deleteData(':id',[[${moduleName}]]);">
+						<span class="icon-trash" title="删除"></span>
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div th:replace="common/include/common_page"/>
+</div>

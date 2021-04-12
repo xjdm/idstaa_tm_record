@@ -1,23 +1,34 @@
 package com.idstaa.tm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import javax.persistence.Table;
 import java.util.Date;
 
 @Data
+@Table(name = "tm_record")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TmRecord {
     private Long id;
 
+    @JsonProperty("iWho")
     private String iWho;
 
+    @JsonProperty("iWhen")
     private Date iWhen;
 
+    @JsonProperty("iWhere")
     private String iWhere;
 
+    @JsonProperty("iWhat")
     private String iWhat;
 
+    @JsonProperty("iWhy")
     private String iWhy;
 
+    @JsonProperty("iHow")
     private String iHow;
 
     private String remark;
@@ -63,5 +74,12 @@ public class TmRecord {
                 .append(effective);
         sb.append('}');
         return sb.toString();
+    }
+
+    public TmRecord(Long id) {
+        this.id = id;
+    }
+
+    public TmRecord() {
     }
 }

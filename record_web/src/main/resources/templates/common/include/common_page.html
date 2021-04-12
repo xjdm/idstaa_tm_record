@@ -1,0 +1,17 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="paging" th:with="prefix=${'default'}">
+	<div class="pull-right">
+		<ul class="pagination">
+			<li class="prev"><a href="javascript:void(0);" th:id="${prefix}+'_goTop'">首页</a></li>
+			<li class="prev"><a href="javascript:void(0);" th:id="${prefix}+'_prePage'">上一页</a></li>
+			<li class="next"><a href="javascript:void(0);" th:id="${prefix}+'_nextPage'">下一页</a></li>
+			<li><a href="javascript:void(0);" th:id="${prefix}+'_lastPage'">末页</a></li>
+			<li class="disabled"><a>第<span th:id="${prefix}+'_currentPage'">0</span>页&nbsp;&nbsp; 共<span th:id="${prefix}+'_totalPage'">0</span>页&nbsp;&nbsp; 共<span th:id="${prefix}+'_total'">0</span>条记录
+			</a></li>
+		</ul>
+	</div>
+	<form th:id="${prefix}+'_pagingArg'" style="display: none">
+		<input th:id="${prefix}+'_arg_currentPage'" type="text" name="currentPage" /> <input th:id="${prefix}+'_arg_pageSize'" type="text" name="pageSize" />
+	</form>
+</div>

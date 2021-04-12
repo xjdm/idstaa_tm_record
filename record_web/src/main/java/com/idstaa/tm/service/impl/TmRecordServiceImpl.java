@@ -21,6 +21,6 @@ public class TmRecordServiceImpl  implements TmRecordService {
 
     @Override
     public TmRecord selectByPrimaryKey(Long id) {
-        return tmRecordMapper.selectByPrimaryKey(id);
+        return tmRecordMapper.selectOne(new TmRecord(id));
     }
 }
