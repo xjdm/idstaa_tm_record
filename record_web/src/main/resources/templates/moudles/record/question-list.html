@@ -2,14 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/include/common_header"></head>
 <title>问题列表</title>
-<script type="text/javascript" th:inline="javascript">
-	$("#dataDisplay").jpaging({
-		url : [[@{/record/query}]],
-	formId : "searchForm",
-			pageSize : "10",
-			objProperty : "results"
-	});
-</script>
 <body th:with="moduleName =${'record'}">
 <nav class="breadcrumb">
 	<i class="Hui-iconfont">&#xe67f;</i>
@@ -23,11 +15,108 @@
 <div class="page-container">
 	<div id="loading" class="loading" style="display: none;">Loading...</div>
 	<div class="container-main">
-		<div th:replace="moudles/record/searchForm" />
-		<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a class="btn btn-primary radius" data-title="添加资讯" data-href="article-add.html" onclick="Hui_admin_tab(this)" href="javascript:;"><i class="Hui-iconfont">&#xe600;</i> 添加资讯</a></span> <span class="r">共有数据：<strong>54</strong> 条</span> </div>
-		<div th:replace="moudles/record/dataDisplay" />
-		<div th:replace="common/include/common_functions" />
+		<script type="text/html" id="toolbarDemo">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+				<button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+				<button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+			</div>
+		</script>
+		<!-- 数据表格展示窗口 -->
+		<table class="layui-hide" id="test" lay-filter="test"></table>
+		<script type="text/html" id="barDemo">
+			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		</script>
 	</div>
 </div>
+<!-- 数据表格展示layui -->
+<script type="text/javascript">
+	layui.use('table', function () {
+		var table = layui.table;
+		table.render({
+			elem: '#test'
+			, url: '/record/query'
+			,toolbar: true
+			,title: '用户数据表'
+			,totalRow: true
+			,method :'post'
+			,contentType : 'application/json'
+			,response: {
+				statusCode: 1 //重新规定成功的状态码为 200，table 组件默认为 0
+			},toolbar: '#toolbarDemo'
+			, cols: [ [
+				  {type: 'checkbox', fixed: 'left'}
+				, {field: 'id', width: 40, title: 'ID', sort: true}
+				, {field: 'iWho', width: 100, title: '何人'}
+				, {field: 'iWhen', width: 150, title: '何时', sort: true}
+				, {field: 'iWhat', width: 80, title: '何地'}
+				, {field: 'iWhy', title: '何事', minWidth: 80}
+				, {field: 'iHow', title: '怎么样', minWidth: 80}
+				, {field: 'createTime', width: 80, title: '创建时间', sort: true}
+				, {field: 'createUser', width: 80, title: '创建人', sort: true}
+				, {field: 'remark', width: 80, title: '备注'}
+				, {fixed: 'right', title:'操作', toolbar: '#barDemo', width:170}
+			] ]
+			, page: true
+			, parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+				return {
+					"code": res.code, //解析接口状态
+					"msg": res.message, //解析提示文本
+					"count": res.results.total, //解析数据长度
+					"data": res.results.list //解析数据列表
+				};
+			}
+		});
+
+		//头工具栏事件
+		table.on('toolbar(test)', function(obj){
+			var checkStatus = table.checkStatus(obj.config.id);
+			switch(obj.event){
+				case 'getCheckData':
+					var data = checkStatus.data;
+					layer.alert(JSON.stringify(data));
+					break;
+				case 'getCheckLength':
+					var data = checkStatus.data;
+					layer.msg('选中了：'+ data.length + ' 个');
+					break;
+				case 'isAll':
+					layer.msg(checkStatus.isAll ? '全选': '未全选');
+					break;
+
+					//自定义头工具栏右侧图标 - 提示
+				case 'LAYTABLE_TIPS':
+					layer.alert('这是工具栏右侧自定义的一个图标按钮');
+					break;
+			};
+		});
+
+		//监听行工具事件
+		table.on('tool(test)', function(obj){
+			var data = obj.data;
+			//console.log(obj)
+			if(obj.event === 'detail'){
+				layer.msg('ID：'+ data.id + ' 的查看操作');
+			}else if(obj.event === 'del'){
+				layer.confirm('真的删除行么', function(index){
+					obj.del();
+					layer.close(index);
+				});
+			} else if(obj.event === 'edit'){
+				layer.prompt({
+					formType: 2
+					,value: data.email
+				}, function(value, index){
+					obj.update({
+						email: value
+					});
+					layer.close(index);
+				});
+			}
+		});
+	});
+</script>
 </body>
 </html>

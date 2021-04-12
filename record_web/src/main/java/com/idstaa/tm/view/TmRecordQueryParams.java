@@ -1,5 +1,6 @@
 package com.idstaa.tm.view;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.idstaa.tm.entity.TmRecord;
 import lombok.Data;
 
@@ -9,6 +10,8 @@ import lombok.Data;
  */
 @Data
 public class TmRecordQueryParams extends TmRecord {
+    @JsonProperty("page")
     private Integer currentPage;
+    @JsonProperty("limit")
     private Integer pageSize;
 }

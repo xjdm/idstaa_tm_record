@@ -3,6 +3,7 @@ package com.idstaa.tm.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Table;
 import java.util.Date;
@@ -20,6 +21,7 @@ public class TmRecord {
     private Date iWhen;
 
     @JsonProperty("iWhere")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String iWhere;
 
     @JsonProperty("iWhat")
@@ -33,10 +35,12 @@ public class TmRecord {
 
     private String remark;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
 
     private String createUser;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date updateTime;
 
     private String updateUser;
