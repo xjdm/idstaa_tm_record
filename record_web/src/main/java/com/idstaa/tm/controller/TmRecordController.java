@@ -35,10 +35,10 @@ public class TmRecordController {
      */
     @PostMapping("/query")
     @ResponseBody
-    public AppResult<PageInfo> query(TmRecordQueryParams param) {
+    public AppResult<PageInfo> query(@RequestBody TmRecordQueryParams param) {
         // 分页参数封装
         int currentPage = 1;
-        int pageSize = 10;
+        int pageSize = 1;
         if(param.getPageSize()!=null && param.getPageSize()!=0){
             pageSize = param.getPageSize();
         }

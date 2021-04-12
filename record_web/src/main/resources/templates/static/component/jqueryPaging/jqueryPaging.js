@@ -13,7 +13,8 @@ $.fn.jpaging = function(jsonParams) {
 		sortOrder : "",
 		objProperty : "",
 		templatePrefix : "default",
-		extObj : ""
+		extObj : "",
+		newCurrentPage :null
 	};
 	$.extend(true, defaults, jsonParams, jsonParams || {});
 	// 初始化变量-展示模板
@@ -26,15 +27,11 @@ $.fn.jpaging = function(jsonParams) {
 	var currentPage = defaults.templatePrefix + "_currentPage";
 	var arg_currentPage = defaults.templatePrefix + "_arg_currentPage";
 	var arg_pageSize = defaults.templatePrefix + "_arg_pageSize";
+	var arg_prePage = defaults.templatePrefix + "_arg_prePage";
+	var arg_nextPage = defaults.templatePrefix + "_arg_nextPage";
+	var arg_lastPage = defaults.templatePrefix + "_arg_lastPage";
 	var arg_sortColumn = defaults.templatePrefix + "_arg_sortColumn";
 	var arg_order = defaults.templatePrefix + "_arg_order";
-	// 初始化变量-分页按钮
-	var goTop = defaults.templatePrefix + "_goTop";
-	var lastPage = defaults.templatePrefix + "_lastPage";
-	var prePage = defaults.templatePrefix + "_prePage";
-	var nextPage = defaults.templatePrefix + "_nextPage";
-	var goTo = defaults.templatePrefix + "_goTo";
-	var goToPage = defaults.templatePrefix + "_goToPage";
 	var search = "search";
 	// 绑定检索
 	this.unbind(search).bind(search, function() {
@@ -51,69 +48,6 @@ $.fn.jpaging = function(jsonParams) {
 	_self.find("#" + arg_pageSize).val(defaults.pageSize);
 	_self.find("#" + arg_sortColumn).val(defaults.sorColumn);
 	_self.find("#" + arg_order).val(defaults.sortOrder);
-	// 分页绑定事件
-	this.find("#" + goTop).unbind("click").bind("click", function() {
-		$("#" + arg_currentPage).val(1);
-		var postData = prepareData();
-		$.ajaxExtends.asyncPostJson(defaults.url, postData, function(data) {
-			displayData(data);
-		});
-	});
-	this.find("#" + lastPage).unbind("click").bind("click", function() {
-		$("#" + arg_currentPage).val($("#" + totalPage).text());
-		var postData = prepareData();
-		$.ajaxExtends.asyncPostJson(defaults.url, postData, function(data) {
-			displayData(data);
-		});
-	});
-	this.find("#" + prePage).unbind("click").bind("click", function() {
-		var currentPageNum = $("#" + currentPage).text();
-		if (currentPageNum == 1) {
-			alert("\u5df2\u5230\u7b2c\u4e00\u9875\u4e86");
-			return false;
-		}
-		$("#" + arg_currentPage).val(currentPageNum * 1 - 1);
-		var postData = prepareData();
-		$.ajaxExtends.asyncPostJson(defaults.url, postData, function(data) {
-			$("#" + currentPage).text(currentPageNum * 1 - 1);
-			displayData(data);
-		});
-	});
-	this.find("#" + nextPage).unbind("click").bind("click", function() {
-		var currentPageNum = $("#" + currentPage).text();
-		if (currentPageNum == $("#" + totalPage).text()) {
-			alert("\u5df2\u5230\u6700\u540e\u4e00\u9875\u4e86");
-			return false;
-		}
-		$("#" + arg_currentPage).val(currentPageNum * 1 + 1);
-		var postData = prepareData();
-		$.ajaxExtends.asyncPostJson(defaults.url, postData, function(data) {
-			$("#" + currentPage).text(currentPageNum * 1 + 1);
-			displayData(data);
-		});
-	});
-	this.find("#" + goTo).unbind("click").bind("click", function() {
-		var goToPage = $("#" + goToPage).val();
-		if (goToPage == null || goToPage == "") {
-			return;
-		}
-		if (isNaN(goToPage)) {
-			$("#" + goToPage).val("");
-			$("#" + goToPage).focus();
-			alert("\u8bf7\u8f93\u5165\u6570\u5b57!");
-			return;
-		}
-		if (goToPage * 1 > $("#" + totalPage).text() || goToPage * 1 < 1) {
-			alert("\u9875\u7801\u8d85\u8fc7\u8303\u56f4\u4e86");
-			return false;
-		}
-		$("#" + arg_currentPage).val(goToPage);
-		var postData = prepareData();
-		$.ajaxExtends.asyncPostJson(defaults.url, postData, function(data) {
-			$("#" + currentPage).text(goToPage);
-			displayData(data);
-		});
-	});
 	// 排序绑定事件
 	this.bindTableHeadFn = function() {
 		$("#" + arg_sortColumn).val(defaults.sortColumns[0]);
@@ -185,7 +119,14 @@ $.fn.jpaging = function(jsonParams) {
 	// 准备post的数据
 	var prepareData = function() {
 		var pagingArg = defaults.templatePrefix + "_pagingArg";
+		var newCurrentPage = defaults.newCurrentPage;
 		var pageData = $("#" + pagingArg).serializeForm();
+		if(newCurrentPage!=null || newCurrentPage!=undefined){
+			if(newCurrentPage==0){
+				newCurrentPage==1;
+			}
+			pageData.currentPage = newCurrentPage;
+		}
 		if (defaults.formId != null && defaults.formId != "") {
 			var postData = {};
 			var formData = $("#" + defaults.formId).serializeForm();
@@ -195,7 +136,8 @@ $.fn.jpaging = function(jsonParams) {
 			for ( var attr in formData) {
 				postData[attr] = formData[attr];
 			}
-			formData["pagingParams"] = pageData;
+			formData["currentPage"] = pageData.currentPage;
+			formData["pageSize"] = pageData.pageSize;
 			console.log(JSON.stringify(formData));
 			return formData;
 		} else {
@@ -224,6 +166,7 @@ $.fn.jpaging = function(jsonParams) {
 		}
 		console.log(JSON.stringify(data));
 		if (data != null) {
+			pagedata = data;
 			var fixedContentObj = $("#" + contentArea).find("#" + fixedContent);
 			if (fixedContentObj.size() > 0) {
 				$("#" + contentArea).empty();
@@ -233,7 +176,10 @@ $.fn.jpaging = function(jsonParams) {
 			}
 			$("#" + totalPage).text(data.pages);
 			$("#" + total).text(data.total);
-			$("#" + currentPage).text($("#" + arg_currentPage).val());
+			$("#" + currentPage).text(data.pageNum);
+			$("#" + arg_prePage).val(data.prePage);
+			$("#" + arg_nextPage).val(data.nextPage);
+			$("#" + arg_lastPage).val(data.pages);
 			// 得到样式行对像
 			var rowNum = 1;
 			$.each(data.list, function(i, recordObj) {
@@ -280,5 +226,6 @@ $.fn.jpaging = function(jsonParams) {
 	(function() {
 		// bindTableHeadFn();
 		freshPaging();
+
 	}());
 };
