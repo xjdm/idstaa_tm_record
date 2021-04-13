@@ -11,7 +11,8 @@
 2、h-ui 界面拆分
 3、增加通用数据AppResult 和 AppResultList 返回
 ```
-0.1.0 2020-04-13 分页改造
+0.1.1 2020-04-13 分页改造
+```
 1、选用layui 进行分页改造
 2、增加springboot 全局异常拦截器
 3、crud 模板增加_tmf_list 、 _tmf_edit、

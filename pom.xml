@@ -14,7 +14,7 @@
     </parent>
     <groupId>com.idstaa.tm</groupId>
     <artifactId>idstaa_tm</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>idstaa_tm</name>
     <description>idstaa time memory</description>
     <properties>
