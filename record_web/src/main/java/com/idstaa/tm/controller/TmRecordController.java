@@ -32,7 +32,7 @@ public class TmRecordController {
 
     @RequestMapping("/recordListView")
     public String queryListView() {
-        return "moudles/record/question-list";
+        return "/moudles/record/record-list";
     }
 
     /**
