@@ -3,14 +3,18 @@ package com.idstaa.tm.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.idstaa.tm.entity.TmRecord;
+import com.idstaa.tm.exception.IdstaaGlobalException;
 import com.idstaa.tm.mapper.TmRecordMapper;
 import com.idstaa.tm.result.AppResult;
+import com.idstaa.tm.result.Constant;
 import com.idstaa.tm.result.ReturnWrapper;
 import com.idstaa.tm.view.TmRecordQueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -22,6 +26,9 @@ import java.util.List;
 public class TmRecordController {
     @Autowired
     private TmRecordMapper tmRecordMapper;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @RequestMapping("/recordListView")
     public String queryListView() {
@@ -60,6 +67,49 @@ public class TmRecordController {
         TmRecord tmRecord = new TmRecord(id);
         tmRecord.setEffective(true);
         TmRecord tmRecords = tmRecordMapper.selectOne(tmRecord);
+        request.setAttribute("tmRecord", tmRecord);
         return new ReturnWrapper<TmRecord>(tmRecords).success("success");
+    }
+
+    @GetMapping("/editView/{isAdd}/{id}")
+    public String editView(@PathVariable Long isAdd,@PathVariable(required = false) Long id) {
+        if(isAdd==1){
+            request.setAttribute("isAdd", 1);
+            return "moudles/record/record-edit";
+        }else{
+            TmRecord tmRecord = new TmRecord(id);
+            tmRecord.setEffective(true);
+            TmRecord tmRecords = tmRecordMapper.selectOne(tmRecord);
+            request.setAttribute("tmRecord", tmRecords);
+        }
+        return "moudles/record/record-edit";
+    }
+
+
+    @PostMapping("/add")
+    @ResponseBody
+    public AppResult<String> add(@RequestBody TmRecord tmRecord) {
+        tmRecord.setEffective(true);
+        if(tmRecord.getId()!=null){
+            Example example = new Example(TmRecord.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andCondition("id="+tmRecord.getId());
+            tmRecordMapper.updateByExample(tmRecord,example);
+        }else {
+            tmRecordMapper.insertSelective(tmRecord);
+        }
+        return new ReturnWrapper<String>().success("success");
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public AppResult<String> add(@PathVariable Long id) throws IdstaaGlobalException {
+        TmRecord tmRecord = new TmRecord(id);
+        TmRecord query = tmRecordMapper.selectOne(tmRecord);
+        if (query==null){
+            throw new IdstaaGlobalException(Constant.ACCESS_CODE.FAILED.getCode(),"该数据已删除");
+        }
+        int i = tmRecordMapper.delete(tmRecord);
+        return new ReturnWrapper<String>().success("success");
     }
 }

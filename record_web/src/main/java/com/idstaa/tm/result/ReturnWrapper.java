@@ -28,7 +28,9 @@ public class ReturnWrapper<T> {
 		AppResult<T> appResult = new AppResult<T>();
 		appResult.setCode(Constant.ACCESS_CODE.SUCCESS.getCode());
 		appResult.setMessage(message);
-		appResult.setResults(result.get(0));
+		if(result.size()>0){
+			appResult.setResults(result.get(0));
+		}
 		return appResult;
 	}
 

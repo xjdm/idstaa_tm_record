@@ -1,8 +1,10 @@
 ﻿<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/include/common_header"></head>
+<!-- ======================================================0、header，引入_tmf_head -->
+<head th:replace="common/include/_tmf_head"></head>
 <title>问题列表</title>
 <body th:with="moduleName =${'record'}">
+<!-- ======================================================1、导航 -->
 <nav class="breadcrumb">
 	<i class="Hui-iconfont">&#xe67f;</i>
 	首页
@@ -12,35 +14,35 @@
 	5W1H法
 	<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
 </nav>
+<!-- ======================================================2、数据表格展示窗口 -->
 <div class="page-container">
 	<div id="loading" class="loading" style="display: none;">Loading...</div>
 	<div class="container-main">
 		<script type="text/html" id="toolbarDemo">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-				<button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-				<button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+				<button class="layui-btn layui-btn-sm layui-btn layui-btn-radius" lay-event="getCheckData">获取选中行数据</button>
+				<button class="layui-btn layui-btn-sm layui-btn layui-btn-radius" lay-event="getCheckLength">获取选中数目</button>
+				<button class="layui-btn layui-btn-sm layui-btn layui-btn-radius" lay-event="isAll">验证是否全选</button>
+				<button class="layui-btn layui-btn-sm layui-btn-warm layui-btn-radius" lay-event="add">添加</button>
 			</div>
 		</script>
 		<!-- 数据表格展示窗口 -->
-		<table class="layui-hide" id="test" lay-filter="test"></table>
+		<table class="layui-hide" id="idstaaDataTable" lay-filter="test"></table>
 		<script type="text/html" id="barDemo">
-			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+			<a class="layui-btn layui-btn-sm layui-btn-normal layui-btn-radius" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-sm layui-btn-danger layui-btn-radius" lay-event="del">删除</a>
 		</script>
 	</div>
 </div>
-<!-- 数据表格展示layui -->
+<!-- ======================================================3、layui 数据表格展示layui -->
 <script type="text/javascript">
 	layui.use('table', function () {
 		var table = layui.table;
 		table.render({
-			elem: '#test'
+			elem: '#idstaaDataTable'
 			, url: '/record/query'
 			,toolbar: true
 			,title: '用户数据表'
-			,totalRow: true
 			,method :'post'
 			,contentType : 'application/json'
 			,response: {
@@ -48,16 +50,16 @@
 			},toolbar: '#toolbarDemo'
 			, cols: [ [
 				  {type: 'checkbox', fixed: 'left'}
-				, {field: 'id', width: 40, title: 'ID', sort: true}
-				, {field: 'iWho', width: 100, title: '何人'}
-				, {field: 'iWhen', width: 150, title: '何时', sort: true}
-				, {field: 'iWhat', width: 80, title: '何地'}
-				, {field: 'iWhy', title: '何事', minWidth: 80}
+				, {field: 'id',  title: 'ID', sort: true,width:60,height:200}
+				, {field: 'iWho',  title: '何人',sort: true}
+				, {field: 'iWhen',  title: '何时', sort: true , minWidth: 180}
+				, {field: 'iWhere',  title: '何地', sort: true}
+				, {field: 'iWhat', title: '何事', minWidth: 80}
 				, {field: 'iHow', title: '怎么样', minWidth: 80}
-				, {field: 'createTime', width: 80, title: '创建时间', sort: true}
-				, {field: 'createUser', width: 80, title: '创建人', sort: true}
-				, {field: 'remark', width: 80, title: '备注'}
-				, {fixed: 'right', title:'操作', toolbar: '#barDemo', width:170}
+				, {field: 'createTime',  title: '创建时间', sort: true,minWidth: 180}
+				, {field: 'createUser', title: '创建人', sort: true}
+				, {field: 'remark',  title: '备注', sort: true}
+				, {fixed: 'right', title:'操作', toolbar: '#barDemo',minWidth: 180}
 			] ]
 			, page: true
 			, parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
@@ -82,6 +84,10 @@
 					var data = checkStatus.data;
 					layer.msg('选中了：'+ data.length + ' 个');
 					break;
+				case 'add':
+					var data = checkStatus.data;
+					idstaa_layer_show("title","/record/editView/1/1");
+					break;
 				case 'isAll':
 					layer.msg(checkStatus.isAll ? '全选': '未全选');
 					break;
@@ -96,24 +102,31 @@
 		//监听行工具事件
 		table.on('tool(test)', function(obj){
 			var data = obj.data;
-			//console.log(obj)
-			if(obj.event === 'detail'){
-				layer.msg('ID：'+ data.id + ' 的查看操作');
-			}else if(obj.event === 'del'){
+			if(obj.event === 'del'){
 				layer.confirm('真的删除行么', function(index){
-					obj.del();
-					layer.close(index);
+					layer.confirm('确认要删除吗？',function(index){
+						$.ajax({
+							type: 'POST',
+							url: '/record/delete/'+data.id,
+							dataType: 'json',
+							success: function(data){
+								if(data.code!=1){
+									layer.msg(data.message,{icon:1,time:1000});
+								}else{
+									layer.msg('已删除!',{icon:1,time:1000});
+									obj.del();
+									layer.close(index);
+								}
+							},
+							error:function(data) {
+								console.log(data.msg);
+							},
+						});
+					});
 				});
 			} else if(obj.event === 'edit'){
-				layer.prompt({
-					formType: 2
-					,value: data.email
-				}, function(value, index){
-					obj.update({
-						email: value
-					});
-					layer.close(index);
-				});
+				var data = obj.data;
+				idstaa_layer_show("title","/record/editView/2/"+data.id);
 			}
 		});
 	});

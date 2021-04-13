@@ -8076,7 +8076,7 @@ UE.Editor.defaultOptions = function(editor){
                             me.fireEvent('serverConfigLoaded');
                             me._serverConfigLoaded = true;
                         } catch (e) {
-                            showErrorMsg(me.getLang('loadconfigFormatError'));
+                            // showErrorMsg(me.getLang('loadconfigFormatError'));
                         }
                     },
                     'onerror':function(){
